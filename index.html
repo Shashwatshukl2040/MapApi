@@ -10,7 +10,7 @@
       width: 100vw;
     }
   </style>
-  
+  <!-- Google Maps API -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFhTdTKSJKihINLKbLaB94NIrDcupkBCQ"></script>
 </head>
 <body>
@@ -20,61 +20,80 @@
     let map, vehicleMarker, routePolyline;
     let routePath = [];
     
+    // Simulate vehicle location data (dummy data directly in frontend)
+    const locationData = [
+      { latitude: 17.385044, longitude: 78.486671 },
+      { latitude: 17.390000, longitude: 78.490000 },
+      { latitude: 17.400000, longitude: 78.495000 },
+      { latitude: 17.405000, longitude: 78.500000 },
+      { latitude: 17.410000, longitude: 78.510000 },
+      { latitude: 17.415000, longitude: 78.515000 },
+      { latitude: 17.420000, longitude: 78.520000 },
+      { latitude: 17.425000, longitude: 78.525000 },
+      { latitude: 17.430000, longitude: 78.530000 },
+      { latitude: 17.435000, longitude: 78.535000 },
+      { latitude: 17.440000, longitude: 78.540000 },
+      { latitude: 17.445000, longitude: 78.545000 }
+    ];
+
+    let currentIndex = 0; // Start at the first position in the location data
+
+    // Initialize the map
     async function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 17.385044, lng: 78.486671 },
+        center: { lat: 17.385044, lng: 78.486671 }, // Initial center of the map
         zoom: 12,
       });
     
       const vehicleIcon = {
-        url: 'https://img.icons8.com/color/48/000000/car.png', 
-        scaledSize: new google.maps.Size(30, 30),
+        url: 'https://img.icons8.com/color/48/000000/car.png', // Vehicle icon
+        scaledSize: new google.maps.Size(30, 30), // Size of the icon
       };
     
+      // Create vehicle marker
       vehicleMarker = new google.maps.Marker({
         map: map,
         icon: vehicleIcon,
-        position: { lat: 17.385044, lng: 78.486671 },
+        position: { lat: 17.385044, lng: 78.486671 }, // Initial position
       });
     
+      // Create the route polyline (vehicle's path)
       routePolyline = new google.maps.Polyline({
         map: map,
-        strokeColor: '#FF0000',
+        strokeColor: '#FF0000', // Red path
         strokeOpacity: 1.0,
         strokeWeight: 2,
       });
     
-      setInterval(fetchVehicleLocation, 1000);
+      // Simulate fetching the vehicle location every second
+      setInterval(updateVehicleLocation, 1000);
     }
-    
-    async function fetchVehicleLocation() {
-      try {
-        const response = await fetch('/api/location');
-        const locationData = await response.json();
-    
-        
-        if (!routePath.length || 
-            (routePath.length && 
-             (routePath[routePath.length - 1].lat !== locationData.latitude ||
-              routePath[routePath.length - 1].lng !== locationData.longitude))) {
-    
-          const position = { lat: locationData.latitude, lng: locationData.longitude };
-          vehicleMarker.setPosition(position);
-    
-          
-          routePath.push(position);
-          routePolyline.setPath(routePath);
-    
-          
-          map.panTo(position);
-        }
-      } catch (error) {
-        console.error('Error fetching vehicle location:', error);
+
+    // Function to update vehicle's location
+    function updateVehicleLocation() {
+      if (currentIndex < locationData.length) {
+        const position = {
+          lat: locationData[currentIndex].latitude,
+          lng: locationData[currentIndex].longitude
+        };
+
+        // Update vehicle marker's position
+        vehicleMarker.setPosition(position);
+
+        // Add position to the route path and update the polyline
+        routePath.push(position);
+        routePolyline.setPath(routePath);
+
+        // Move the map center to the new vehicle position
+        map.panTo(position);
+
+        // Move to the next position in the location data
+        currentIndex++;
       }
     }
-    
+
+    // Initialize the map when the window loads
     window.onload = initMap;
-    </script>
-    
+  </script>
 </body>
 </html>
