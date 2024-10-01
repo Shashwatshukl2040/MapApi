@@ -1,0 +1,14 @@
+{
+  "name": "vehicle-movement-map",
+  "version": "1.0.0",
+  "description": "Web app to display vehicle movement on a map using Node.js and Google Maps",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Shashwat Shukla",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
